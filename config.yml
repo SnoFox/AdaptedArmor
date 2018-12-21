@@ -1,0 +1,106 @@
+---
+disabledRecipes:
+  - DIAMOND_HELMET
+  - DIAMOND_CHESTPLATE
+  - DIAMOND_LEGGINGS
+  - DIAMOND_BOOTS
+  - IRON_HELMET
+  - IRON_CHESTPLATE
+  - IRON_LEGGINGS
+  - IRON_BOOTS
+armorDefinitions:
+  iron_leather_helmet:
+    name: Iron Leather Cap
+    shape:
+      - III
+      - I I
+    key:
+      I: IRON_INGOT
+    resultMaterial: LEATHER_HELMET
+    maxDamage: 165
+    armor: 2
+  iron_leather_chestplate:
+    name: Iron Leather Tunic
+    shape:
+      - I I
+      - III
+      - III
+    key:
+      I: IRON_INGOT
+    resultMaterial: LEATHER_CHESTPLATE
+    maxDamage: 240
+    armor: 6
+  iron_leather_leggings:
+    name: Iron Leather Pants
+    shape:
+      - III
+      - I I
+      - I I
+    key:
+      I: IRON_INGOT
+    resultMaterial: LEATHER_LEGGINGS
+    maxDamage: 225
+    armor: 5
+  iron_leather_boots:
+    name: Iron Leather Boots
+    shape:
+      - I I
+      - I I
+    key:
+      I: IRON_INGOT
+    resultMaterial: LEATHER_BOOTS
+    maxDamage: 195
+    armor: 2
+  diamond_leather_helmet:
+    name: Diamond Leather Cap
+    shape:
+      - III
+      - I I
+    key:
+      I: DIAMOND
+    resultMaterial: LEATHER_HELMET
+    maxDamage: 364
+    armor: 3
+  diamond_leather_chestplate:
+    name: Diamond Leather Tunic
+    shape:
+      - I I
+      - III
+      - III
+    key:
+      I: DIAMOND
+    resultMaterial: LEATHER_CHESTPLATE
+    maxDamage: 529
+    armor: 8
+  diamond_leather_leggings:
+    name: Diamond Leather Pants
+    shape:
+      - III
+      - I I
+      - I I
+    key:
+      I: DIAMOND
+    resultMaterial: LEATHER_LEGGINGS
+    maxDamage: 496
+    armor: 6
+  diamond_leather_boots:
+    name: Diamond Leather Boots
+    shape:
+      - I I
+      - I I
+    key:
+      I: DIAMOND
+    resultMaterial: LEATHER_BOOTS
+    maxDamage: 430
+    armor: 3
+  sno_helm:
+    name: Sno's Helmet
+    shape:
+      - III
+      - I I
+    key:
+      I: BARRIER
+    resultMaterial: TURTLE_HELMET
+    maxDamage: 1000
+    armor: 40
+    unbreakable: true

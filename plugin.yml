@@ -1,0 +1,9 @@
+name: AdaptedArmor
+description: Rebalance Minecraft combat
+version: 1.0.0
+main: net.snofox.minecraft.adaptedarmor.AdaptedArmor
+author: SnoFox
+website: https://www.snofox.net/
+api-version: 1.13
+depend: []
+softdepend: []
