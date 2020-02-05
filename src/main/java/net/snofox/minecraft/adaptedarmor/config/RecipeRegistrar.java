@@ -11,8 +11,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.tags.CustomItemTagContainer;
-import org.bukkit.inventory.meta.tags.ItemTagType;
 
 import java.util.List;
 import java.util.UUID;
@@ -21,14 +19,18 @@ import java.util.UUID;
  * Created by Josh on 2018-12-17
  */
 public class RecipeRegistrar {
-    public static boolean registerRecipes(ConfigurationSection config) {
+    private static AdaptedArmor module;
+
+    public static boolean registerRecipes(final AdaptedArmor adaptedArmor, final ConfigurationSection config) {
+        module = adaptedArmor;
         boolean addedAll = true;
         for(String recipeKey : config.getKeys(false)) {
             Bukkit.getLogger().info("Registering: " + recipeKey);
             ConfigurationSection recipeConfig = config.getConfigurationSection(recipeKey);
             final NamespacedKey namespacedKey = getNamespacedKey(recipeKey);
             final ItemStack itemStack = generateItemStack(recipeConfig.getString("name"), recipeConfig.getString("resultMaterial"),
-                    recipeConfig.getInt("maxDamage"), recipeConfig.getInt("armor"), recipeConfig.getBoolean("unbreakable", false));
+                    recipeConfig.getInt("maxDamage"), recipeConfig.getInt("armor"), recipeConfig.getBoolean("unbreakable", false),
+                    recipeConfig.getString("repairMaterial"));
             final ShapedRecipe recipe = generateShapedRecipe(namespacedKey, recipeConfig.getStringList("shape"),
                     recipeConfig.getConfigurationSection("key"), itemStack);
             addedAll = AdaptedArmor.getInstance().addRecipe(recipe) & addedAll;
@@ -41,8 +43,10 @@ public class RecipeRegistrar {
     }
 
     private static ItemStack generateItemStack(final String name, final String materialStr, final Integer maxDamage,
-                                               final Integer armorPoints, final boolean isUnbreakable) {
+                                               final Integer armorPoints, final boolean isUnbreakable,
+                                               final String repairMaterialStr) {
         final Material resultMaterial = Material.matchMaterial(materialStr);
+        final Material repairMaterial = (repairMaterialStr == null ? null :  Material.matchMaterial(repairMaterialStr));
         final ItemStack itemStack = new ItemStack(resultMaterial);
         final ItemMeta itemMeta = itemStack.getItemMeta();
         itemMeta.setDisplayName(name);
@@ -52,10 +56,11 @@ public class RecipeRegistrar {
         final AttributeModifier modifier = new AttributeModifier(attributeSlotUuid, "adaptedarmor.armor",
                 armorPoints.doubleValue(), AttributeModifier.Operation.ADD_NUMBER, detectedSlot);
         itemMeta.addAttributeModifier(Attribute.GENERIC_ARMOR, modifier);
-        final CustomItemTagContainer customTagsContainer = itemMeta.getCustomTagContainer();
-        customTagsContainer.setCustomTag(AdaptedArmor.getInstance().ADAPTED_ARMOR_DAMAGE_CURRENT, ItemTagType.INTEGER, maxDamage);
-        customTagsContainer.setCustomTag(AdaptedArmor.getInstance().ADAPTED_ARMOR_DAMAGE_MAX, ItemTagType.INTEGER, maxDamage);
         itemStack.setItemMeta(itemMeta);
+        module.setIntTag(module.ADAPTED_ARMOR_DAMAGE_CURRENT, itemStack, maxDamage);
+        module.setIntTag(module.ADAPTED_ARMOR_DAMAGE_MAX, itemStack, maxDamage);
+        if(repairMaterial != null)
+            module.setStringTag(module.ADAPTED_ARMOR_REPAIR_MATERIAL, itemStack, repairMaterial.toString());
         return itemStack;
     }
 

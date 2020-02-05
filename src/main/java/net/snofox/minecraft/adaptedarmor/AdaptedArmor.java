@@ -1,10 +1,13 @@
 package net.snofox.minecraft.adaptedarmor;
 
 import net.snofox.minecraft.adaptedarmor.config.RecipeRegistrar;
+import net.snofox.minecraft.snolib.recipes.RecipeDiscoveryManager;
 import org.bukkit.NamespacedKey;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.tags.ItemTagType;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.jetbrains.annotations.Contract;
 
@@ -25,6 +28,7 @@ public class AdaptedArmor extends JavaPlugin {
 
     private static AdaptedArmor instance;
 
+    public final NamespacedKey ADAPTED_ARMOR_REPAIR_MATERIAL = new NamespacedKey(this, "repair_material");
     public final NamespacedKey ADAPTED_ARMOR_DAMAGE_MAX = new NamespacedKey(this, "max_damage");
     public final NamespacedKey ADAPTED_ARMOR_DAMAGE_CURRENT = new NamespacedKey(this, "current_damage");
 
@@ -41,6 +45,8 @@ public class AdaptedArmor extends JavaPlugin {
         return getInstance().ADAPTED_ARMOR_DAMAGE_CURRENT;
     }
 
+    public static NamespacedKey getRepairMaterialKey() { return getInstance().ADAPTED_ARMOR_REPAIR_MATERIAL; }
+
     @Override
     public void onLoad() {
         getLogger().info("Armor becoming more fair...");
@@ -52,14 +58,13 @@ public class AdaptedArmor extends JavaPlugin {
     public void onEnable() {
         disableVanilla();
         initRecipes();
-        getServer().getPluginManager().registerEvents(new RecipeDiscoveryListener(), this);
         getServer().getPluginManager().registerEvents(new DamageListener(), this);
-
-        getLogger().info("Combat is now fair again");
+        getServer().getPluginManager().registerEvents(new RepairCraftingListener(this), this);
+        getLogger().info("Armor is now fair again");
     }
 
     private void initRecipes() {
-        if(!RecipeRegistrar.registerRecipes(getConfig().getConfigurationSection("armorDefinitions")))
+        if(!RecipeRegistrar.registerRecipes(this, getConfig().getConfigurationSection("armorDefinitions")))
             getLogger().warning("Some (or all) recipes failed to register! This is sad :[");
     }
 
@@ -92,5 +97,90 @@ public class AdaptedArmor extends JavaPlugin {
                 itr.remove();
             }
         }
+    }
+
+    /**
+     * Check to see if an ItemStack is created from this plugin
+     * @param itemStack
+     * @return
+     */
+    public boolean isCustomItem(final ItemStack itemStack) {
+        return hasIntTag(ADAPTED_ARMOR_DAMAGE_MAX, itemStack) && hasIntTag(ADAPTED_ARMOR_DAMAGE_CURRENT, itemStack);
+    }
+
+    /**
+     * Returns a string value, or null if it doesn't exist.
+     * @param key
+     * @param itemStack
+     * @return
+     */
+    public String getStringTag(final NamespacedKey key, final ItemStack itemStack) {
+        return getKey(key, ItemTagType.STRING, itemStack);
+    }
+
+    public void setStringTag(final NamespacedKey key, final ItemStack itemStack, final String value) {
+        setTag(key, itemStack, ItemTagType.STRING, value);
+    }
+
+    /**
+     * Checks for existance of a string value
+     * @param key
+     * @param itemStack
+     * @return
+     */
+    public boolean hasStringTag(final NamespacedKey key, final ItemStack itemStack) {
+        return hasKey(key, ItemTagType.STRING, itemStack);
+    }
+
+    /**
+     * Returns a string value, or null if it doesn't exist.
+     * @param key
+     * @param itemStack
+     * @return
+     */
+    public Integer getIntTag(final NamespacedKey key, final ItemStack itemStack) {
+        return getKey(key, ItemTagType.INTEGER, itemStack);
+    }
+
+    /**
+     * Set the key to the specified integer value for the given itemstack
+     * @param key
+     * @param itemStack
+     * @param value
+     */
+    public void setIntTag(final NamespacedKey key, final ItemStack itemStack, final Integer value) {
+        setTag(key, itemStack, ItemTagType.INTEGER, value);
+    }
+
+    private <Z> void setTag(final NamespacedKey key, final ItemStack itemStack, final ItemTagType<?, Z> tagType, final Z value) {
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        itemMeta.getCustomTagContainer().setCustomTag(key, tagType, value);
+        itemStack.setItemMeta(itemMeta);
+    }
+
+    /**
+     * Checks for existance of a string value
+     * @param key
+     * @param itemStack
+     * @return
+     */
+    public boolean hasIntTag(final NamespacedKey key, final ItemStack itemStack) {
+        return hasKey(key, ItemTagType.INTEGER, itemStack);
+    }
+
+    private <Z> Z getKey(final NamespacedKey key, final ItemTagType<?, Z> tagType, final ItemStack itemStack) {
+        if(!hasMeta(itemStack)) return null;
+        return itemStack.getItemMeta().getCustomTagContainer().getCustomTag(key, tagType);
+    }
+
+    private boolean hasKey(final NamespacedKey key, final ItemTagType<?, ?> tagType, final ItemStack itemStack) {
+        if(!hasMeta(itemStack)) return false;
+        return itemStack.getItemMeta().getCustomTagContainer().hasCustomTag(key, tagType);
+    }
+
+    private boolean hasMeta(final ItemStack itemStack) {
+        if(itemStack == null) return false;
+        if(!itemStack.hasItemMeta()) return false;
+        return true;
     }
 }

@@ -93,6 +93,7 @@ armorDefinitions:
     resultMaterial: LEATHER_BOOTS
     maxDamage: 430
     armor: 3
+    repairMaterial: DIAMOND
   sno_helm:
     name: Sno's Helmet
     shape:

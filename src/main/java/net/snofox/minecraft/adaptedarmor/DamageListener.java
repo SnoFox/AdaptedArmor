@@ -39,21 +39,10 @@ public class DamageListener implements Listener {
     private void damageEquipment(final LivingEntity entity) {
         final ItemStack[] armorList = entity.getEquipment().getArmorContents();
         for(ItemStack armor : armorList) {
-            if(isCustomItem(armor))
+            if(AdaptedArmor.getInstance().isCustomItem(armor))
                 decrementDamage(armor);
         }
         entity.getEquipment().setArmorContents(armorList);
-        // TODO set armorList back onto LivingEntity
-        // TODO break things???
-    }
-
-    private boolean isCustomItem(final ItemStack itemStack) {
-        if(itemStack == null) return false;
-        if(!itemStack.hasItemMeta()) return false;
-        final ItemMeta itemMeta = itemStack.getItemMeta();
-        if(!itemMeta.getCustomTagContainer().hasCustomTag(AdaptedArmor.getDamageMaxKey(), ItemTagType.INTEGER))
-            return false;
-        return itemMeta.getCustomTagContainer().hasCustomTag(AdaptedArmor.getDamageMaxKey(), ItemTagType.INTEGER);
     }
 
     private void decrementDamage(final ItemStack itemStack) {

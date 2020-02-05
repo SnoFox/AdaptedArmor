@@ -12,7 +12,7 @@
     1. Do not need to handle merging multiple items at once
 
 ## Plugin
-1. Remove "foodTickTimer" health boost
+1. x Remove "foodTickTimer" health boost
 
 ## Plugin 
 1. Special condition that increases damage out towards players & decreases damage in from players
@@ -25,7 +25,6 @@
 1. Disable combat potions
     1. Disable brewing stand UI
     1. Modify loot tables 
-    
-    
+
 # Potential long-term goal
 1. Cooldowns on certain "magic" items currently disabled
